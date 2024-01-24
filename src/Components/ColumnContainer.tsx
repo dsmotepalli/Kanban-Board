@@ -104,7 +104,7 @@ function ColumnContainer({
         </div>
       </div>
       {/* column task container */}
-      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto ">
         <SortableContext items={tasksId}>
           {Tasks.map((task) => (
             <TaskCard

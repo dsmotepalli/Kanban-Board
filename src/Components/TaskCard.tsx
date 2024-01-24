@@ -52,7 +52,7 @@ function TaskCard({ task, deleteTask, updateTaskContent }: Props) {
       style={style}
       {...listeners}
       {...attributes}
-      className="bg-mainBackgroundColor p-2 h-[100px] min-h-[100px] items-center text-left flex rounded-xl hover:ring-2 hover:ring-rose-500 hover:ring-inset cursor-grab relative"
+      className="bg-mainBackgroundColor p-2 h-[100px] min-h-[100px] items-center text-left flex rounded-xl hover:ring-2 hover:ring-rose-500 hover:ring-inset cursor-grab relative task"
       onMouseEnter={() => setMouseIsOver(true)}
       onMouseLeave={() => setMouseIsOver(false)}
       onClick={() => setEditMode(true)}

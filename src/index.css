@@ -8,7 +8,7 @@ html,body,#root{
 
 
 ::-webkit-scrollbar{
- width: 1px;
+ width: 8px;
 }
 
 
@@ -18,4 +18,8 @@ html,body,#root{
 
 ::-webkit-scrollbar-thumb{
   @apply bg-rose-800 rounded-xl
+}
+
+.task > ::-webkit-scrollbar-thumb {
+  @apply bg-sky-500 rounded-xl w-2;
 }
