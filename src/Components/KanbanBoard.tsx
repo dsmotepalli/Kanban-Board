@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import PlusIcon from "../Icons/PlusIcon";
-import { Column, Id } from "../types";
+import { Column, Id, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
 import {
   DndContext,
@@ -18,7 +18,9 @@ function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
   const columsId = useMemo(() => columns.map((col) => col.id), [columns]);
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-
+  const [Tasks, setTasks] = useState<Task[]>([]);
+  console.log(columns);
+  console.log(Tasks);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -43,6 +45,10 @@ function KanbanBoard() {
                     key={col.id}
                     deleteColumn={deleteColumn}
                     column={col}
+                    UpdateColumnTitle={UpdateColumnTitle}
+                    createTask={createTask}
+                    Tasks={Tasks.filter((task) => task.columnId === col.id)}
+                    deleteTask={deleteTask}
                   />
                 );
               })}
@@ -50,7 +56,7 @@ function KanbanBoard() {
           </div>
           <button
             onClick={() => CreateNewColumn()}
-            className="h-[60px] w-[350px] min-w-[350px] cursor-pointer rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor p-2 ring-rose-500 hover:ring-2 flex gap-2 items-center"
+            className="h-[60px] w-[350px] min-w-[350px] cursor-pointer rounded-lg bg-mainBackgroundColor border-2 border-columnBackgroundColor p-2 ring-rose-500 hover:ring-2 flex gap-2 items-center hover:ring-inset"
           >
             <PlusIcon /> Add Column
           </button>
@@ -61,6 +67,10 @@ function KanbanBoard() {
             <ColumnContainer
               column={activeColumn}
               deleteColumn={deleteColumn}
+              UpdateColumnTitle={UpdateColumnTitle}
+              createTask={createTask}
+              Tasks={Tasks.filter((task) => task.id === activeColumn.id)}
+              deleteTask={deleteTask}
             />
           )}
         </DragOverlay>
@@ -98,6 +108,25 @@ function KanbanBoard() {
         return arrayMove(columns, activeColumnIndex, overColumnIndex);
       });
     }
+  }
+  function UpdateColumnTitle(id: Id, title: string) {
+    const newColumns = columns.map((col) => {
+      if (col.id !== id) return col;
+      return { ...col, title };
+    });
+    setColumns(newColumns);
+  }
+  function createTask(columnId: Id) {
+    const newTask: Task = {
+      id: generateId(),
+      content: `Task ${Tasks.length + 1}`,
+      columnId,
+    };
+    setTasks([...Tasks, newTask]);
+  }
+  function deleteTask(id:Id){
+    const newTasks = Tasks.filter((task)=>task.id!==id)
+    setTasks(newTasks);
   }
 }
 function generateId() {

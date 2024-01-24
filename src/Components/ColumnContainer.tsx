@@ -1,28 +1,52 @@
 import { useSortable } from "@dnd-kit/sortable";
 import DeleteIcon from "../Icons/DeleteIcon";
-import { Column, Id } from "../types";
+import { Column, Id, Task } from "../types";
 
 import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
+import PlusIcon from "../Icons/PlusIcon";
+import TaskCard from "./TaskCard";
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
+  UpdateColumnTitle: (id: Id, title: string) => void;
+
+  createTask: (columnId: Id) => void;
+  deleteTask: (id: Id) => void;
+  Tasks: Task[];
 }
 
 function ColumnContainer(props: Props) {
-  const { column, deleteColumn } = props;
-  const { attributes, listeners, setNodeRef, transform, isDragging,transition } =
-    useSortable({
-      id: column.id,
-      data: {
-        type: "Column",
-        column,
-      },
-    });
+  const {
+    column,
+    deleteColumn,
+    UpdateColumnTitle,
+    createTask,
+    Tasks,
+    deleteTask,
+  } = props;
+  console.log(Tasks);
+  const [editMode, setEditMode] = useState(false);
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    isDragging,
+    transition,
+  } = useSortable({
+    id: column.id,
+    data: {
+      type: "Column",
+      column,
+    },
+    disabled: editMode,
+  });
   const style = {
     transition,
     transform: CSS.Translate.toString(transform),
   };
-  if(isDragging){
+  if (isDragging) {
     return (
       <div
         ref={setNodeRef}
@@ -41,13 +65,29 @@ function ColumnContainer(props: Props) {
       <div
         {...listeners}
         {...attributes}
+        onClick={() => setEditMode(true)}
         className="bg-mainBackgroundColor text-xl h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-4 border-columnBackgroundColor flex items-center justify-between"
       >
         <div className=" flex gap-4">
           <div className="bg-columnBackgroundColor flex  justify-center items-center px-2 py-1 text-sm rounded-full">
             0
           </div>
-          {column.title}
+
+          {editMode ? (
+            <input
+              className="bg-mainBackgroundColor border-2 focus:border-rose-500 rounded outline-none"
+              value={column.title}
+              autoFocus
+              onChange={(e) => UpdateColumnTitle(column.id, e.target.value)}
+              onBlur={() => setEditMode(false)}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") return;
+                setEditMode(false);
+              }}
+            />
+          ) : (
+            column.title
+          )}
         </div>
         <div>
           <button
@@ -59,9 +99,19 @@ function ColumnContainer(props: Props) {
         </div>
       </div>
       {/* column task container */}
-      <div className="flex flex-grow">conster</div>
+      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+        {Tasks.map((task) => (
+          <TaskCard deleteTask={deleteTask} key={task.id} task={task} />
+        ))}
+      </div>
       {/* column footer */}
-      <div>fppter</div>
+      <button
+        onClick={() => createTask(column.id)}
+        className="border-columnBackgroundColor border-2 flex p-4 items-center justify-center gap-4 hover:bg-mainBackgroundColor hover:text-rose-500"
+      >
+        <PlusIcon />
+        Add Task
+      </button>
     </div>
   );
 }
