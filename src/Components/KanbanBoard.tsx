@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PlusIcon from "../Icons/PlusIcon";
 import { Column, Id, Task } from "../types";
 import ColumnContainer from "./ColumnContainer";
@@ -22,7 +22,7 @@ function KanbanBoard() {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [Tasks, setTasks] = useState<Task[]>([]);
-  
+  console.log(JSON.stringify(columns))
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -31,6 +31,27 @@ function KanbanBoard() {
     }),
     useSensor(TouchSensor)
   );
+
+   useEffect(() => {
+     // Load data from localStorage when the component mounts
+     const storedColumns = localStorage.getItem("columns");
+     const storedTasks = localStorage.getItem("tasks");
+
+     if (storedColumns) {
+       setColumns(JSON.parse(storedColumns));
+     }
+
+     if (storedTasks) {
+       setTasks(JSON.parse(storedTasks));
+     }
+   }, []);
+   
+  useEffect(() => {
+    localStorage.setItem("columns", JSON.stringify(columns));
+    localStorage.setItem("tasks", JSON.stringify(Tasks));
+  }, [columns, Tasks]);
+
+ 
   return (
     <div className="m-auto min-h-screen w-full overflow-x-auto overflow-y-hidden flex  items-center px-[40px]">
       <DndContext
