@@ -1,32 +1,37 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import DeleteIcon from "../Icons/DeleteIcon";
 import { Column, Id, Task } from "../types";
 
 import { CSS } from "@dnd-kit/utilities";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import PlusIcon from "../Icons/PlusIcon";
 import TaskCard from "./TaskCard";
+
 interface Props {
   column: Column;
   deleteColumn: (id: Id) => void;
   UpdateColumnTitle: (id: Id, title: string) => void;
 
   createTask: (columnId: Id) => void;
+  updateTaskContent: (id: Id, content: string) => void;
   deleteTask: (id: Id) => void;
   Tasks: Task[];
+
+ 
 }
 
-function ColumnContainer(props: Props) {
-  const {
-    column,
-    deleteColumn,
-    UpdateColumnTitle,
-    createTask,
-    Tasks,
-    deleteTask,
-  } = props;
-  console.log(Tasks);
+function ColumnContainer({
+  column,
+  deleteColumn,
+  UpdateColumnTitle,
+  createTask,
+  Tasks,
+  deleteTask,
+  updateTaskContent,
+ 
+}: Props) {
   const [editMode, setEditMode] = useState(false);
+  const tasksId = useMemo(() => Tasks.map((task) => task.id), [Tasks]);
   const {
     attributes,
     listeners,
@@ -100,9 +105,16 @@ function ColumnContainer(props: Props) {
       </div>
       {/* column task container */}
       <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
-        {Tasks.map((task) => (
-          <TaskCard deleteTask={deleteTask} key={task.id} task={task} />
-        ))}
+        <SortableContext items={tasksId}>
+          {Tasks.map((task) => (
+            <TaskCard
+              updateTaskContent={updateTaskContent}
+              deleteTask={deleteTask}
+              key={task.id}
+              task={task}
+            />
+          ))}
+        </SortableContext>
       </div>
       {/* column footer */}
       <button
@@ -112,6 +124,7 @@ function ColumnContainer(props: Props) {
         <PlusIcon />
         Add Task
       </button>
+      
     </div>
   );
 }
