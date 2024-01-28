@@ -22,7 +22,7 @@ function KanbanBoard() {
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [Tasks, setTasks] = useState<Task[]>([]);
-  console.log(JSON.stringify(columns))
+  console.log(JSON.stringify(columns));
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -32,26 +32,25 @@ function KanbanBoard() {
     useSensor(TouchSensor)
   );
 
-   useEffect(() => {
-     // Load data from localStorage when the component mounts
-     const storedColumns = localStorage.getItem("columns");
-     const storedTasks = localStorage.getItem("tasks");
+  useEffect(() => {
+    // Load data from localStorage when the component mounts
+    const storedColumns = localStorage.getItem("columns");
+    const storedTasks = localStorage.getItem("tasks");
 
-     if (storedColumns) {
-       setColumns(JSON.parse(storedColumns));
-     }
+    if (storedColumns) {
+      setColumns(JSON.parse(storedColumns));
+    }
 
-     if (storedTasks) {
-       setTasks(JSON.parse(storedTasks));
-     }
-   }, []);
-   
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    }
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("columns", JSON.stringify(columns));
     localStorage.setItem("tasks", JSON.stringify(Tasks));
   }, [columns, Tasks]);
 
- 
   return (
     <div className="m-auto min-h-screen w-full overflow-x-auto overflow-y-hidden flex  items-center px-[40px]">
       <DndContext
@@ -123,7 +122,7 @@ function KanbanBoard() {
     setColumns(filteredColumns);
     // deleting a column should delete the tasks associated with the column
     const newTasks = Tasks.filter((task) => task.columnId !== id);
-    setTasks(newTasks)
+    setTasks(newTasks);
   }
   function onDragStart(event: DragStartEvent) {
     if (event.active.data.current?.type === "Column") {
@@ -139,7 +138,7 @@ function KanbanBoard() {
     setActiveColumn(null);
     setActiveTask(null);
     const { active, over } = event;
-    console.log(active,over);
+    console.log(active, over);
     if (active.id !== over?.id) {
       setColumns((columns: Column[]) => {
         const activeColumnIndex = columns.findIndex(
@@ -178,7 +177,7 @@ function KanbanBoard() {
   }
   function onDragOver(event: DragOverEvent) {
     const { active, over } = event;
-    
+
     if (!over) return;
     if (active.id === over.id) return;
 
@@ -192,16 +191,14 @@ function KanbanBoard() {
         );
         const overTaskIndex = tasks.findIndex((task) => task.id === over.id);
 
-       if (tasks[activeTaskIndex].columnId != tasks[overTaskIndex].columnId) {
-         tasks[activeTaskIndex].columnId = tasks[overTaskIndex].columnId;
-         return arrayMove(tasks, activeTaskIndex, overTaskIndex - 1);
-       }
+        tasks[activeTaskIndex].columnId = tasks[overTaskIndex].columnId;
+
         return arrayMove(tasks, activeTaskIndex, overTaskIndex);
       });
     }
 
     const isOverAColumn = over.data.current?.type === "Column";
-    
+
     if (isActiveATask && isOverAColumn) {
       setTasks((tasks) => {
         const activeTaskIndex = tasks.findIndex(

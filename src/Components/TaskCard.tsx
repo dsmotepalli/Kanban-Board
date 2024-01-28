@@ -11,7 +11,7 @@ interface Props {
 
 function TaskCard({ task, deleteTask, updateTaskContent }: Props) {
   const [mouseIsOver, setMouseIsOver] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(true);
 
   const {
     attributes,
@@ -61,6 +61,7 @@ function TaskCard({ task, deleteTask, updateTaskContent }: Props) {
         <textarea
           autoFocus
           value={task.content}
+          
           className="bg-transparent text-white h-[90%] w-full outline-none resize-none border-none rounded"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
